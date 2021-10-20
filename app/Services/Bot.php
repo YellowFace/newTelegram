@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Query;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 
 class Bot {
 
@@ -386,6 +387,8 @@ class Bot {
         }
         else {
             $query = $this->parserCommand->sendLinksForProcessing($links, $this->user['id']);
+
+            Log::info($query);
 
             if ($query['message']) $this->telegramCommand->sendMessageToChat($this->chatId, $query['message']);
             elseif (isset($query['links'])) {

@@ -31,7 +31,7 @@ class IndexController extends Controller
             $message = $update->getMessage()->text;
             $chatId = $chat->id;
             $username = $chat->username;
-            
+
             Log::info($username . ': ' . $message);
 
             $bot = new Bot($chatId, $username, $message, $this->telegram);
