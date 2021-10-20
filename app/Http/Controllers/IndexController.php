@@ -23,6 +23,9 @@ class IndexController extends Controller
     public function index(Request $request)
     {
         $update = $this->telegram->getWebhookUpdate();
+
+        Log::info($update);
+
         $message = $update->getMessage();
         $chat = $update->getChat();
 
