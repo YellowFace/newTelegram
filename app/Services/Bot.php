@@ -392,19 +392,22 @@ class Bot {
 
             Log::info($query);
 
-            if ($query['message']) $this->telegramCommand->sendMessageToChat($this->chatId, $query['message']);
-            elseif (isset($query['links'])) {
-                foreach ($query['links'] as $link) {
-                    Query::query()->create([
-                        'user_id' => $this->user['id'],
-                        'link_id' => $link['id'],
-                    ]);
-
-                    if ($this->user['role'] == 'member') User::query()->decrement('limit', 1);
-                }
-
-                $this->telegramCommand->sendMessageToChat($this->chatId, 'Ссылки отправлены в обработку');
+            if($query['code'] != 0) {
+                $message = $query['message'] ?? 'Произошла ошибка отправки';
+                $this->telegramCommand->sendMessageToChat($this->chatId, $message);
             }
+
+            foreach ($query['links'] as $link) {
+                Query::query()->create([
+                    'user_id' => $this->user['id'],
+                    'link_id' => $link['id'],
+                ]);
+
+                if ($this->user['role'] == 'member') User::query()->decrement('limit', 1);
+            }
+
+            $message = $query['message'] ?? 'Ссылки отправлены в обработку';
+            $this->telegramCommand->sendMessageToChat($this->chatId, $message);
         }
     }
 }
