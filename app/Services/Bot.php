@@ -386,9 +386,9 @@ class Bot {
             $this->telegramCommand->sendMessageToChat($this->chatId, 'Превышен лимит просмотров', true);
         }
         else {
-            $query = $this->parserCommand->sendLinksForProcessing($links, $this->user['id']);
+            Log::info(implode(',', $links));
 
-            Log::info((string)$links);
+            $query = $this->parserCommand->sendLinksForProcessing($links, $this->user['id']);
 
             Log::info($query);
 
