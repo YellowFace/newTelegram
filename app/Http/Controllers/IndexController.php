@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Services\Bot;
 use App\Services\TelegramCommand;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Api;
 
 class IndexController extends Controller
@@ -22,6 +23,8 @@ class IndexController extends Controller
     public function index(Request $request)
     {
         $data = $request->all();
+
+        Log::info('payload to index', $data);
 
         $updates = $this->telegram->getWebhookUpdates();
         $message = $this->telegram->getWebhookUpdates()->getMessage()->getText();
@@ -69,3 +72,4 @@ class IndexController extends Controller
         return json_encode($response);
     }
 }
+
