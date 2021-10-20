@@ -388,6 +388,8 @@ class Bot {
         else {
             $query = $this->parserCommand->sendLinksForProcessing($links, $this->user['id']);
 
+            Log::info((string)$links);
+
             Log::info($query);
 
             if ($query['message']) $this->telegramCommand->sendMessageToChat($this->chatId, $query['message']);
