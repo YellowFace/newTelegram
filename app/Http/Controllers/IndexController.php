@@ -24,13 +24,21 @@ class IndexController extends Controller
     {
         $data = $request->all();
 
-        $updates = $this->telegram->getWebhookUpdates();
-        $message = $this->telegram->getWebhookUpdates()->getMessage()->getText();
-        $chatId = $this->telegram->getWebhookUpdates()->getMessage()->getChat()->getId();
-        $username = $this->telegram->getWebhookUpdates()->getMessage()->getChat()->getUsername();
+//        $updates = $this->telegram->getWebhookUpdates();
+        $message = $this->telegram->getWebhookUpdate()->message;
 
-        $bot = new Bot($chatId, $username, $message, $this->telegram);
-        $bot->controller();
+        $chat = $this->telegram->getChat();
+
+        if($chat)
+        {
+            $chatId = $chat->id;
+            $username = $chat->username;
+
+            $bot = new Bot($chatId, $username, $message, $this->telegram);
+            $bot->controller();
+        }
+
+        return response(null, 200);
     }
 
     public function webhook(Request $request)

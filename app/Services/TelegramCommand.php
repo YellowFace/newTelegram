@@ -56,7 +56,7 @@ class TelegramCommand
             $keyboard = array_merge($keyboard, $adminKeyboard);
         }
 
-        return $this->telegram->replyKeyboardMarkup([
+        return json_encode([
             'keyboard' => $keyboard,
             'resize_keyboard' => true,
             'one_time_keyboard' => false
