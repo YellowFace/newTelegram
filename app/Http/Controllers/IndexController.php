@@ -33,8 +33,8 @@ class IndexController extends Controller
 
         if($chat)
         {
-            $chatId = $chat->get('id');
-            $username = $chat->get('username');
+            $chatId = $chat->id;
+            $username = $chat->username;
 
             $bot = new Bot($chatId, $username, $message, $this->telegram);
             $bot->controller();
