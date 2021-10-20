@@ -24,17 +24,15 @@ class IndexController extends Controller
     {
         $update = $this->telegram->getWebhookUpdates();
 
-        Log::info($update);
-
-        $message = $update->getMessage()->text;
         $chat = $update->getChat();
 
-        Log::info($chat);
-
-        if($chat)
+        if($chat && $chat->has('id'))
         {
+            $message = $update->getMessage()->text;
             $chatId = $chat->id;
             $username = $chat->username;
+            
+            Log::info($username . ': ' . $message);
 
             $bot = new Bot($chatId, $username, $message, $this->telegram);
             $bot->controller();
