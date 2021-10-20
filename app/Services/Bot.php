@@ -92,6 +92,8 @@ class Bot {
         if (!$this->user) {
             $this->telegramCommand->sendMessageToChat($this->chatId, 'У вас нет доступа к этому боту', true);
         }
+
+        $this->telegramCommand->setUser($this->user);
     }
 
 

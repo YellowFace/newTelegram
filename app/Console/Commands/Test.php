@@ -17,8 +17,6 @@ class Test extends Command
 
         $info = $parserCommand->getQueueInfo();
 
-        dd($info);
-
         return Command::SUCCESS;
     }
 }

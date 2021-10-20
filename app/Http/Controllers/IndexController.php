@@ -24,8 +24,6 @@ class IndexController extends Controller
     {
         $data = $request->all();
 
-        Log::info('payload to index', $data);
-
         $updates = $this->telegram->getWebhookUpdates();
         $message = $this->telegram->getWebhookUpdates()->getMessage()->getText();
         $chatId = $this->telegram->getWebhookUpdates()->getMessage()->getChat()->getId();

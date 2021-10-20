@@ -2,15 +2,24 @@
 
 namespace App\Services;
 
+use App\Models\User;
 use Telegram\Bot\Api;
 
 class TelegramCommand
 {
     protected Api $telegram;
 
+    /** @var User */
+    protected $user;
+
     public function __construct(Api $telegram)
     {
         $this->telegram = $telegram;
+    }
+
+    public function setUser($user)
+    {
+        $this->user = $user;
     }
 
     public function sendMessageToChat($chatId, $message, $die = false, $html = false)
@@ -47,7 +56,7 @@ class TelegramCommand
             $keyboard = array_merge($keyboard, $adminKeyboard);
         }
 
-        return $this->telegramApi->replyKeyboardMarkup([
+        return $this->telegram->replyKeyboardMarkup([
             'keyboard' => $keyboard,
             'resize_keyboard' => true,
             'one_time_keyboard' => false
