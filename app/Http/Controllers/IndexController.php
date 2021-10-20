@@ -24,6 +24,8 @@ class IndexController extends Controller
     {
         $update = $this->telegram->getWebhookUpdate();
 
+        Log::info($update);
+
         $message = $update->getMessage();
         $chat = $update->getChat();
 
