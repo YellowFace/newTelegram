@@ -22,11 +22,11 @@ class IndexController extends Controller
 
     public function index(Request $request)
     {
-        $update = $this->telegram->getWebhookUpdate();
+        $update = $this->telegram->getWebhookUpdates();
 
         Log::info($update);
 
-        $message = $update->getMessage();
+        $message = $update->getMessage()->text;
         $chat = $update->getChat();
 
         Log::info($chat);
