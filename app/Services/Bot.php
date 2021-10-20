@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\Query;
 use App\Models\User;
-use Telegram\Bot\Api;
 
 class Bot {
 
@@ -13,7 +12,9 @@ class Bot {
     private $message;
 
     private $explodedMessage;
-    private User $user;
+
+    /** @var User */
+    private $user;
 
     private ParserCommand $parserCommand;
     private TelegramCommand $telegramCommand;
@@ -84,7 +85,7 @@ class Bot {
     private function checkAccess()
     {
         /** @var User $user */
-        $user = User::query()->firstWhere('username');
+        $user = User::query()->firstWhere('username', $this->username);
 
         $this->user = $user;
 
