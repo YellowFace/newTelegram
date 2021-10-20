@@ -27,6 +27,8 @@ class ParserCommand
             RequestOptions::JSON => json_encode($data)
         ]);
 
+        $response = $response->getBody()->getContents();
+
         return json_decode($response, true);
     }
 
@@ -41,6 +43,8 @@ class ParserCommand
             RequestOptions::JSON => json_encode($data)
         ]);
 
+        $response = $response->getBody()->getContents();
+
         return json_decode($response, true);
     }
 
@@ -48,6 +52,8 @@ class ParserCommand
     public function getUsers()
     {
         $response = $this->client->get($this->serverIp . '/users');
+
+        $response = $response->getBody()->getContents();
 
         return json_decode($response, true);
     }
@@ -62,6 +68,8 @@ class ParserCommand
             RequestOptions::JSON => json_encode($data)
         ]);
 
+        $response = $response->getBody()->getContents();
+
         return json_decode($response, true);
     }
 
@@ -69,12 +77,16 @@ class ParserCommand
     {
         $response = $this->client->get($this->serverIp . '/proxies');
 
+        $response = $response->getBody()->getContents();
+
         return json_decode($response, true);
     }
 
     public function getQueueInfo()
     {
         $response = $this->client->get($this->serverIp . '/links/queue/count');
+
+        $response = $response->getBody()->getContents();
 
         return json_decode($response, true);
     }
@@ -84,12 +96,16 @@ class ParserCommand
     {
         $response = $this->client->delete($this->serverIp . '/proxies');
 
+        $response = $response->getBody()->getContents();
+
         return json_decode($response, true);
     }
 
     public function deleteAccounts()
     {
         $response = $this->client->delete($this->serverIp . '/users');
+        
+        $response = $response->getBody()->getContents();
 
         return json_decode($response, true);
     }
