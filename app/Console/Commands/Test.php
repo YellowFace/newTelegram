@@ -2,7 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Services\ParserCommand;
+use GuzzleHttp\Client;
+use GuzzleHttp\RequestOptions;
 use Illuminate\Console\Command;
 
 class Test extends Command
@@ -13,15 +14,21 @@ class Test extends Command
 
     public function handle()
     {
-        $parserCommand = new ParserCommand();
+        $client = new Client();
 
-        $urls = [];
+        $data = [
+            "id" => 1981,
+            "url" => "https://youla.ru/moskva/zhivotnye/koshki/ryzhii-kotienok-choko-v-dar-614ca6ae253a12201a25c10f",
+            "time" => 24,
+            "result" => "Позвоните позже или напишите сообщение"
+        ];
 
-        $urls[] = 'https://youla.ru/moskva/zhivotnye/koshki/ryzhii-kotienok-choko-v-dar-614ca6ae253a12201a25c10f';
-
-        $info = $parserCommand->sendLinksForProcessing($urls, 35);
-
-        dd($info);
+        $client->post('http://pidor1488.ru/api/webhook', [
+            RequestOptions::JSON => $data,
+            RequestOptions::HEADERS => [
+                'Accept' => 'application/json'
+            ]
+        ]);
 
         return Command::SUCCESS;
     }

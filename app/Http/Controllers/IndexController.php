@@ -7,13 +7,11 @@ use App\Models\User;
 use App\Services\Bot;
 use App\Services\TelegramCommand;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Api;
 
 class IndexController extends Controller
 {
     protected Api $telegram;
-    protected TelegramCommand $telegramCommand;
 
     public function __construct()
     {
@@ -53,6 +51,9 @@ class IndexController extends Controller
 
         $user = User::query()->findOrFail($query['user_id']);
 
+        $telegramCommand = new TelegramCommand($this->telegram);
+        $telegramCommand->setUser($user);
+
         if (!$user['chat_id']) {
             $response['result'] = 'chat_id is empty, please, restart the bot';
             return json_encode($response);
@@ -69,7 +70,7 @@ class IndexController extends Controller
             $message .= "?{$params}";
         }
 
-        $this->telegramCommand->sendMessageToChat($user['chat_id'], $message);
+        $telegramCommand->sendMessageToChat($user['chat_id'], $message);
         $query->update(['status' => 'success']);
 
         $response['result'] = 'success';
