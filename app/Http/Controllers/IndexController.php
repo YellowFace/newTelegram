@@ -32,8 +32,6 @@ class IndexController extends Controller
             $chatId = $chat->id;
             $username = $chat->username;
 
-            Log::info($username . ': ' . $message);
-
             $bot = new Bot($chatId, $username, $message, $this->telegram);
             $bot->controller();
         }

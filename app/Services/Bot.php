@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\Query;
 use App\Models\User;
-use Illuminate\Support\Facades\Log;
 
 class Bot {
 
@@ -386,11 +385,7 @@ class Bot {
             $this->telegramCommand->sendMessageToChat($this->chatId, 'Превышен лимит просмотров', true);
         }
         else {
-            Log::info(implode(',', $links));
-
             $query = $this->parserCommand->sendLinksForProcessing($links, $this->user['id']);
-
-            Log::info($query);
 
             if($query['code'] != 0) {
                 $message = $query['message'] ?? 'Произошла ошибка отправки';
