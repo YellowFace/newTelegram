@@ -416,7 +416,7 @@ class Bot {
                     'link_id' => $link['id'],
                 ]);
 
-                if ($this->user['role'] == 'member') User::query()->decrement('limit', 1);
+                if ($this->user['role'] == 'member') User::query()->where('id', $this->user['id'])->decrement('limit', count($links));
             }
 
             $message = $query['message'] ?? 'Ссылки отправлены в обработку';
