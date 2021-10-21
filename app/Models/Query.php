@@ -9,4 +9,6 @@ class Query extends Model
     protected $table = 'query';
 
     protected $guarded = [];
+
+    public $timestamps = false;
 }
