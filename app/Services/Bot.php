@@ -71,12 +71,11 @@ class Bot {
 
         $message = 'Администратор:' . PHP_EOL . $message;
 
-        $users = User::query()->pluck('chat_id')->toArray();
+        $chats = User::query()->whereNotNull('chat_id')->pluck('chat_id')->toArray();
 
-        foreach ($users as $index => $user) {
-            if(!$user['chat_id']) continue;
+        foreach ($chats as $index => $chat) {
             if($index != 0 && ($index % 30) == 0) sleep(1); //лимит телеграма на 30 в секунду
-            $this->telegramCommand->sendMessageToChat($user['chat_id'], $message);
+            $this->telegramCommand->sendMessageToChat($chat, $message);
         }
 
         $this->telegramCommand->sendMessageToChat($this->chatId, 'Уведомление было отправлено.');
