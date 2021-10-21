@@ -70,7 +70,7 @@ class IndexController extends Controller
             $message .= "?{$params}";
         }
 
-        $telegramCommand->sendMessageToChat($user['chat_id'], $message);
+        $telegramCommand->sendMessageToChat($user['chat_id'], $message, false, true);
         $query->update(['status' => 'success']);
 
         $response['result'] = 'success';
