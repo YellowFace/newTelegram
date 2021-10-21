@@ -249,8 +249,8 @@ class Bot {
                 User::query()->where('username', $user['username'])->delete();
 
                 User::query()->create([
-                    'username' => $userData['username'],
-                    'limit' => $userData['limit'],
+                    'username' => $user['username'],
+                    'limit' => $user['limit'],
                     'role' => 'member'
                 ]);
             }
