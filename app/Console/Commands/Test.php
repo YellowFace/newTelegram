@@ -15,7 +15,13 @@ class Test extends Command
     {
         $parserCommand = new ParserCommand();
 
-        $info = $parserCommand->getQueueInfo();
+        $urls = [];
+
+        $urls[] = 'https://youla.ru/moskva/zhivotnye/koshki/ryzhii-kotienok-choko-v-dar-614ca6ae253a12201a25c10f';
+
+        $info = $parserCommand->sendLinksForProcessing($urls, 35);
+
+        dd($info);
 
         return Command::SUCCESS;
     }

@@ -24,7 +24,7 @@ class ParserCommand
         ];
 
         $response = $this->client->post($this->serverIp . '/links', [
-            RequestOptions::JSON => json_encode($data)
+            RequestOptions::JSON => $data
         ]);
 
         $response = $response->getBody()->getContents();
@@ -40,7 +40,7 @@ class ParserCommand
         ];
 
         $response = $this->client->post($this->serverIp . '/users', [
-            RequestOptions::JSON => json_encode($data)
+            RequestOptions::JSON => $data
         ]);
 
         $response = $response->getBody()->getContents();
@@ -65,7 +65,7 @@ class ParserCommand
         ];
 
         $response = $this->client->post($this->serverIp . '/proxies', [
-            RequestOptions::JSON => json_encode($data)
+            RequestOptions::JSON => $data
         ]);
 
         $response = $response->getBody()->getContents();
@@ -104,7 +104,7 @@ class ParserCommand
     public function deleteAccounts()
     {
         $response = $this->client->delete($this->serverIp . '/users');
-        
+
         $response = $response->getBody()->getContents();
 
         return json_decode($response, true);
