@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\Query;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
+use function Symfony\Component\String\s;
 
 class Bot {
 
@@ -384,8 +386,10 @@ class Bot {
             $this->telegramCommand->sendMessageToChat($this->chatId, 'Максимальное количество ссылок - 10', true);
         }
 
+        Log::info($this->user['username'] . ':' . $this->user['role'] . ':' . $this->user['limit']);
+
         // Если пользователь не админ и лимит просмотров закончился, отклоняем запрос
-        if ($this->user['role'] == 'member' && count($this->explodedMessage) >$this->user['limit']) {
+        if ($this->user['role'] == 'member' && count($links) > $this->user['limit']) {
             $this->telegramCommand->sendMessageToChat($this->chatId, 'Превышен лимит просмотров', true);
         }
         else {
