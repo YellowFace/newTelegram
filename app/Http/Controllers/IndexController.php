@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Query;
 use App\Models\User;
 use App\Services\Bot;
+use App\Services\ParserCommand;
 use App\Services\TelegramCommand;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Telegram\Bot\Api;
 
 class IndexController extends Controller
@@ -72,6 +74,11 @@ class IndexController extends Controller
 
         $telegramCommand->sendMessageToChat($user['chat_id'], $message, false, true, true);
         $query->update(['status' => 'success']);
+
+        $parserCommand = new ParserCommand();
+        $queueCount = $parserCommand->getQueueInfo();
+
+        if($queueCount < 10) Cache::forget('stop_processing_links');
 
         $response['result'] = 'success';
         return json_encode($response);

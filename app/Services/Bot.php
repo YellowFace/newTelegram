@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Query;
 use App\Models\User;
+use Illuminate\Support\Facades\Cache;
 
 class Bot {
 
@@ -119,9 +120,7 @@ class Bot {
     {
         $this->checkRights();
 
-        $info = $this->parserCommand->getQueueInfo();
-
-        $count = $info['count'];
+        $count = $this->parserCommand->getQueueInfo();
 
         $message = "Ссылок в ожидание обработки: {$count} шт.";
 
@@ -369,6 +368,18 @@ class Bot {
 
     private function sendLinksForProcessing()
     {
+        $count = $this->parserCommand->getQueueInfo();
+
+        if ($count >= 100) {
+            Cache::put('stop_processing_links', true);
+        }
+
+        $isWorkBlocked = Cache::get('stop_processing_links', false);
+
+        if($isWorkBlocked) {
+            $this->telegramCommand->sendMessageToChat($this->chatId, "Слишком много ссылок в оработке. Подождите. Осталось обработать: {$count} шт.", true);
+        }
+
         $links = [];
 
         // Валидация ссылок

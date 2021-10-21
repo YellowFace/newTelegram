@@ -88,7 +88,9 @@ class ParserCommand
 
         $response = $response->getBody()->getContents();
 
-        return json_decode($response, true);
+        $response = json_decode($response, true);
+        
+        return $response['count'] ?? -1;
     }
 
 
