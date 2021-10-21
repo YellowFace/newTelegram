@@ -75,7 +75,12 @@ class Bot {
 
         foreach ($chats as $index => $chat) {
             if($index != 0 && ($index % 30) == 0) sleep(1); //лимит телеграма на 30 в секунду
-            $this->telegramCommand->sendMessageToChat($chat, $message);
+            try {
+                $this->telegramCommand->sendMessageToChat($chat, $message);
+            }
+            catch (\Exception $exception) {
+                continue;
+            }
         }
 
         $this->telegramCommand->sendMessageToChat($this->chatId, 'Уведомление было отправлено.');
