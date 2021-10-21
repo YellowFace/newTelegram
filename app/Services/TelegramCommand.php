@@ -22,7 +22,7 @@ class TelegramCommand
         $this->user = $user;
     }
 
-    public function sendMessageToChat($chatId, $message, $die = false, $html = false)
+    public function sendMessageToChat($chatId, $message, $die = false, $html = false, $disablePreview = false)
     {
         $reply_markup = $this->getKeyboard();
 
@@ -33,6 +33,7 @@ class TelegramCommand
         ];
 
         if($html) $params['parse_mode'] = 'HTML';
+        if($disablePreview) $params['disable_web_page_preview'] = true;
 
         $this->telegram->sendMessage($params);
 
