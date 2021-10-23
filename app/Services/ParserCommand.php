@@ -23,7 +23,7 @@ class ParserCommand
             'user_id' => $userId,
         ];
 
-        $response = $this->client->post($this->serverIp . '/links', [
+        $response = $this->client->post($this->serverIp . '/api/links', [
             RequestOptions::JSON => $data
         ]);
 
@@ -38,7 +38,7 @@ class ParserCommand
             'users' => $users
         ];
 
-        $response = $this->client->post($this->serverIp . '/users', [
+        $response = $this->client->post($this->serverIp . '/api/users', [
             RequestOptions::JSON => $data
         ]);
 
@@ -49,7 +49,7 @@ class ParserCommand
 
     public function getUsers()
     {
-        $response = $this->client->get($this->serverIp . '/users');
+        $response = $this->client->get($this->serverIp . '/api/users');
 
         $response = $response->getBody()->getContents();
 
@@ -62,7 +62,7 @@ class ParserCommand
             'proxies' => $proxies
         ];
 
-        $response = $this->client->post($this->serverIp . '/proxies', [
+        $response = $this->client->post($this->serverIp . '/api/proxies', [
             RequestOptions::JSON => $data
         ]);
 
@@ -73,7 +73,7 @@ class ParserCommand
 
     public function getProxies()
     {
-        $response = $this->client->get($this->serverIp . '/proxies');
+        $response = $this->client->get($this->serverIp . '/api/proxies');
 
         $response = $response->getBody()->getContents();
 
@@ -82,7 +82,7 @@ class ParserCommand
 
     public function getQueueInfo()
     {
-        $response = $this->client->get($this->serverIp . '/links/queue/count');
+        $response = $this->client->get($this->serverIp . '/api/links/queue/count');
 
         $response = $response->getBody()->getContents();
 
@@ -94,7 +94,7 @@ class ParserCommand
 
     public function deleteProxies()
     {
-        $response = $this->client->delete($this->serverIp . '/proxies');
+        $response = $this->client->delete($this->serverIp . '/api/proxies');
 
         $response = $response->getBody()->getContents();
 
@@ -103,7 +103,7 @@ class ParserCommand
 
     public function deleteAccounts()
     {
-        $response = $this->client->delete($this->serverIp . '/users');
+        $response = $this->client->delete($this->serverIp . '/api/users');
 
         $response = $response->getBody()->getContents();
 
