@@ -364,7 +364,7 @@ class Bot {
 
     private function sendLinksForProcessing()
     {
-        if(getenv('BLOCK_SEND_LINKS')) {
+        if($this->user['role'] == 'member' && getenv('BLOCK_SEND_LINKS')) {
             $this->telegramCommand->sendMessageToChat($this->chatId, "В данный момент идут тех. работы. Подождите.", true);
         }
 
