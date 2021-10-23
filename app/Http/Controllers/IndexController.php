@@ -43,7 +43,7 @@ class IndexController extends Controller
     {
         $data = $request->all();
 
-        if (!isset($data['id'])) {
+        if (!isset($data['id']) || !isset($data['user'])) {
             $response['result'] = 'fail';
             return json_encode($response);
         }
@@ -51,7 +51,7 @@ class IndexController extends Controller
         /** @var Query $query */
         $query = Query::query()->findOrFail($data['id']);
 
-        $user = User::query()->findOrFail($query['user_id']);
+        $user = User::query()->findOrFail($data['user']);
 
         $telegramCommand = new TelegramCommand($this->telegram);
         $telegramCommand->setUser($user);

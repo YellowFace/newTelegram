@@ -206,24 +206,23 @@ class Bot {
     {
         $this->checkRights();
 
-        $query = $this->parserCommand->getUsers();
+        $users = $this->parserCommand->getUsers();
 
-        if (isset($query['users']) && $query['users']) {
-            $count = count($query['users']);
-            $message = 'Добавлено ' . $count . ' аккаунтов:' . "\n";
-
-            if ($count > 50) $users = array_slice($query['users'], -50);
-            else $users = $query['users'];
-
-            foreach ($users as $user) {
-                $message .= "\n" . $user['login'] . ':' . $user['password'];
-            }
-
-            $this->telegramCommand->sendMessageToChat($this->chatId, $message);
+        if(!count($users)) {
+            $this->telegramCommand->sendMessageToChat($this->chatId, 'Нет добавленных аккаунтов', true);
         }
-        else $this->telegramCommand->sendMessageToChat($this->chatId, 'Нет добавленных аккаунтов');
-    }
 
+        $count = count($users);
+        $message = 'Добавлено ' . $count . ' аккаунтов:' . "\n";
+
+        if ($count > 50) $users = array_slice($users, -50);
+
+        foreach ($users as $user) {
+            $message .= PHP_EOL . "{$user['login']}:{$user['password']}";
+        }
+
+        $this->telegramCommand->sendMessageToChat($this->chatId, $message);
+    }
 
     private function addUsers()
     {
@@ -259,7 +258,6 @@ class Bot {
         $this->telegramCommand->sendMessageToChat($this->chatId, 'Пользователи успешно добавлены');
     }
 
-
     private function deleteUsers()
     {
         $this->checkRights();
@@ -277,7 +275,6 @@ class Bot {
         $this->telegramCommand->sendMessageToChat($this->chatId, 'Пользователи успешно удалены');
     }
 
-
     private function getUsers()
     {
         $this->checkRights();
@@ -294,7 +291,6 @@ class Bot {
 
         if ($message) $this->telegramCommand->sendMessageToChat($this->chatId, $message);
     }
-
 
     private function addProxies()
     {
@@ -324,26 +320,25 @@ class Bot {
         $this->telegramCommand->sendMessageToChat($this->chatId, 'Прокси успешно добавлены');
     }
 
-
-
     public function getProxies()
     {
         $this->checkRights();
 
-        $query = $this->parserCommand->getProxies();
+        $proxies = $this->parserCommand->getProxies();
 
-        if (isset($query['proxy']) && $query['proxy']) {
-            $message = 'Добавлено ' . count($query['proxy']) . ' прокси:' . "\n";
-            if (count($query['proxy']) > 20) $proxies = array_slice($query['proxy'], 0, 20);
-            else $proxies = $query['proxy'];
-            foreach ($proxies as $proxy) {
-                $message .=  "\n" . $proxy['host'];
-            }
-            $this->telegramCommand->sendMessageToChat($this->chatId, $message);
+        if (!count($proxies)) {
+            $this->telegramCommand->sendMessageToChat($this->chatId, 'Нет добавленных прокси', true);
         }
-        else $this->telegramCommand->sendMessageToChat($this->chatId, 'Нет добавленных прокси');
-    }
 
+        $message = 'Добавлено ' . count($proxies) . ' прокси:' . "\n";
+        if (count($proxies) > 20) $proxies = array_slice($proxies, 0, 20);
+
+        foreach ($proxies as $proxy) {
+            $message .= PHP_EOL . "{$proxy['ip']}:{$proxy['port']}";
+        }
+
+        $this->telegramCommand->sendMessageToChat($this->chatId, $message);
+    }
 
     private function deleteProxies()
     {
@@ -369,6 +364,10 @@ class Bot {
 
     private function sendLinksForProcessing()
     {
+        if(getenv('BLOCK_SEND_LINKS')) {
+            $this->telegramCommand->sendMessageToChat($this->chatId, "В данный момент идут тех. работы. Подождите.", true);
+        }
+
         $count = $this->parserCommand->getQueueInfo();
 
         if ($count >= 100) {

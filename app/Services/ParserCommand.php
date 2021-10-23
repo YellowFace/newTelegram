@@ -32,7 +32,6 @@ class ParserCommand
         return json_decode($response, true);
     }
 
-
     public function addUsers($users)
     {
         $data = [
@@ -47,7 +46,6 @@ class ParserCommand
 
         return json_decode($response, true);
     }
-
 
     public function getUsers()
     {
@@ -89,7 +87,7 @@ class ParserCommand
         $response = $response->getBody()->getContents();
 
         $response = json_decode($response, true);
-        
+
         return $response['count'] ?? -1;
     }
 
