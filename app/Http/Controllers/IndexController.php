@@ -49,7 +49,7 @@ class IndexController extends Controller
         }
 
         /** @var Query $query */
-        $query = Query::query()->findOrFail($data['id']);
+        $query = Query::query()->firstWhere('link_id', $data['id']);
 
         $user = User::query()->findOrFail($data['user']);
 
