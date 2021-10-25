@@ -75,11 +75,6 @@ class IndexController extends Controller
         $telegramCommand->sendMessageToChat($user['chat_id'], $message, false, true, true);
         $query->update(['status' => 'success']);
 
-        $parserCommand = new ParserCommand();
-        $queueCount = $parserCommand->getQueueInfo();
-
-        if($queueCount < 10) Cache::forget('stop_processing_links');
-
         $response['result'] = 'success';
         return json_encode($response);
     }

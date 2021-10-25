@@ -370,13 +370,7 @@ class Bot {
 
         $count = $this->parserCommand->getQueueInfo();
 
-        if ($count >= 100) {
-            Cache::put('stop_processing_links', true);
-        }
-
-        $isWorkBlocked = Cache::get('stop_processing_links', false);
-
-        if($isWorkBlocked) {
+        if($count >= 150) {
             $this->telegramCommand->sendMessageToChat($this->chatId, "Слишком много ссылок в оработке. Подождите. Осталось обработать: {$count} шт.", true);
         }
 
