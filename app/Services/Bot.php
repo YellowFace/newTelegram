@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\Query;
 use App\Models\User;
+use Carbon\Carbon;
+use Carbon\CarbonInterval;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
@@ -368,7 +370,9 @@ class Bot {
             $this->telegramCommand->sendMessageToChat($this->chatId, "В данный момент идут тех. работы. Подождите.", true);
         }
 
-        $count = $this->parserCommand->getQueueInfo();
+        $count = Cache::remember('links_queue', CarbonInterval::minute(), function () {
+            return $this->parserCommand->getQueueInfo();
+        });
 
         if($count >= 150) {
             $this->telegramCommand->sendMessageToChat($this->chatId, "Слишком много ссылок в оработке. Подождите. Осталось обработать: {$count} шт.", true);
