@@ -370,13 +370,13 @@ class Bot {
             $this->telegramCommand->sendMessageToChat($this->chatId, "В данный момент идут тех. работы. Подождите.", true);
         }
 
-        $count = Cache::remember('links_queue', CarbonInterval::minute(), function () {
-            return $this->parserCommand->getQueueInfo();
-        });
-
-        if($count >= 150) {
-            $this->telegramCommand->sendMessageToChat($this->chatId, "Слишком много ссылок в оработке. Подождите. Осталось обработать: {$count} шт.", true);
-        }
+//        $count = Cache::remember('links_queue', CarbonInterval::minute(), function () {
+//            return $this->parserCommand->getQueueInfo();
+//        });
+//
+//        if($count >= 150) {
+//            $this->telegramCommand->sendMessageToChat($this->chatId, "Слишком много ссылок в оработке. Подождите. Осталось обработать: {$count} шт.", true);
+//        }
 
         $links = [];
 
@@ -393,8 +393,6 @@ class Bot {
             $this->telegramCommand->sendMessageToChat($this->chatId, 'Максимальное количество ссылок - 10', true);
         }
 
-        Log::info($this->user['username'] . ':' . $this->user['role'] . ':' . $this->user['limit']);
-
         // Если пользователь не админ и лимит просмотров закончился, отклоняем запрос
         if ($this->user['role'] == 'member' && count($links) > $this->user['limit']) {
             $this->telegramCommand->sendMessageToChat($this->chatId, 'Превышен лимит просмотров', true);
@@ -404,7 +402,7 @@ class Bot {
 
             if($query['code'] != 0) {
                 $message = $query['message'] ?? 'Произошла ошибка отправки';
-                $this->telegramCommand->sendMessageToChat($this->chatId, $message);
+                $this->telegramCommand->sendMessageToChat($this->chatId, $message, true);
             }
 
             foreach ($query['links'] as $link) {
@@ -416,7 +414,9 @@ class Bot {
                 if ($this->user['role'] == 'member') User::query()->where('id', $this->user['id'])->decrement('limit', count($links));
             }
 
-            $message = $query['message'] ?? 'Ссылки отправлены в обработку';
+            $inProgress = $query['in_progress'] ?? -1;
+
+            $message = $query['message'] ?? "Ссылки отправлены в обработку, ваших в обработке: {$inProgress} шт.";
             $this->telegramCommand->sendMessageToChat($this->chatId, $message);
         }
     }
