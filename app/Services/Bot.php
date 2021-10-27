@@ -364,12 +364,12 @@ class Bot {
         }
     }
 
-    private function isValidUrls($urls)
+    public static function isValidUrls($urls): bool
     {
         foreach ($urls as $url) {
             if(mb_strlen($url) > 255) return false;
-            if(!preg_match('/https:\/\/youla.(ru|io)\/.+/', $url)) return false;
-//            if(preg_match('/[\p{Cyrillic}]+/', $url)) return false;
+            if(!preg_match('/^https:\/\/youla.(ru|io)\/.+/', $url)) return false;
+            if(preg_match('/[А-Яа-яЁё]+/', $url)) return false;
         }
 
         return true;
@@ -384,7 +384,7 @@ class Bot {
         $links = $this->explodedMessage;
 
         // Валидация ссылок
-        if(!$this->isValidUrls($links)) {
+        if(!self::isValidUrls($links)) {
             $this->telegramCommand->sendMessageToChat($this->chatId, 'Неверный формат. Проверьте ссылки еще раз.', true);
         }
 

@@ -2,8 +2,7 @@
 
 namespace App\Console\Commands;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\RequestOptions;
+use App\Services\Bot;
 use Illuminate\Console\Command;
 
 class Test extends Command
@@ -14,21 +13,14 @@ class Test extends Command
 
     public function handle()
     {
-        $client = new Client();
-
-        $data = [
-            "id" => 1981,
-            "url" => "https://youla.ru/moskva/zhivotnye/koshki/ryzhii-kotienok-choko-v-dar-614ca6ae253a12201a25c10f",
-            "time" => 24,
-            "result" => "Позвоните позже или напишите сообщение"
+        $urls = [
+          'https://youla.ru/moskva/smartfony-planshety/smartfony/samsung-galaxy-a21s-32gb-6170240c39e9b244312e1b1f',
+          'https://youla.ru/lyubertsy/smartfony-planshety/smartfony/samsung-galaxy-a10-60c1421b549c927b70391d3e'
         ];
 
-        $client->post('http://pidor1488.ru/api/webhook', [
-            RequestOptions::JSON => $data,
-            RequestOptions::HEADERS => [
-                'Accept' => 'application/json'
-            ]
-        ]);
+        $check = Bot::isValidUrls($urls);
+
+        dd($check);
 
         return Command::SUCCESS;
     }
