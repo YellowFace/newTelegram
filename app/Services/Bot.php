@@ -244,7 +244,7 @@ class Bot {
             if($this->user['role'] == User::ADMIN) $message .= ":{$user['password']}";
         }
 
-        $message .= PHP_EOL . "Не использованы: {$notUsed}";
+        $message .= PHP_EOL . PHP_EOL . "Не использованы: {$notUsed}";
 
         $this->telegramCommand->sendMessageToChat($this->chatId, $message);
     }
