@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Query;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 
 class Bot {
 
@@ -184,6 +185,8 @@ class Bot {
     {
         $this->checkRights([User::ADMIN, User::MODERATOR]);
 
+        $this->addLog('use command /add accounts');
+
         $users = [];
 
         $items = $this->explodedMessage;
@@ -211,9 +214,16 @@ class Bot {
         $this->telegramCommand->sendMessageToChat($this->chatId, 'Аккаунты успешно добавлены');
     }
 
+    private function addLog(string $message)
+    {
+        Log::info("[{$this->user->username}] {$message}");
+    }
+
     public function getAccounts()
     {
         $this->checkRights([User::ADMIN, User::MODERATOR]);
+
+        $this->addLog('use command /get accounts');
 
         $users = $this->parserCommand->getUsers();
 
