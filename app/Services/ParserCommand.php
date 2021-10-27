@@ -91,7 +91,6 @@ class ParserCommand
         return $response['count'] ?? -1;
     }
 
-
     public function deleteProxies()
     {
         $response = $this->client->delete($this->serverIp . '/api/proxies');

@@ -4,10 +4,6 @@ namespace App\Services;
 
 use App\Models\Query;
 use App\Models\User;
-use Carbon\Carbon;
-use Carbon\CarbonInterval;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
 
 class Bot {
 
@@ -78,7 +74,7 @@ class Bot {
         $chats = User::query()->whereNotNull('chat_id')->pluck('chat_id')->toArray();
 
         foreach ($chats as $index => $chat) {
-            if($index != 0 && ($index % 30) == 0) sleep(1); //лимит телеграма на 30 в секунду
+            if($index != 0 && ($index % 30) == 0) sleep(1); //лимит телеграма на 30 в секунду todo global
             try {
                 $this->telegramCommand->sendMessageToChat($chat, $message);
             }
@@ -105,11 +101,11 @@ class Bot {
     }
 
 
-    private function checkRights()
+    private function checkRights($roles = [ User::ADMIN ])
     {
-        if ($this->user['role'] != 'admin') {
-            $this->telegramCommand->sendMessageToChat($this->chatId, 'У вас нет доступа к этой команде', true);
-        }
+        if(in_array($this->user['role'], $roles)) return true;
+
+        $this->telegramCommand->sendMessageToChat($this->chatId, 'У вас нет доступа к этой команде', true);
     }
 
     private function start()
@@ -137,18 +133,29 @@ class Bot {
             '<b>/default message</b> - подставка сообщения в WhatsApp',
         ];
 
-        if($this->user && $this->user['role'] == 'admin') {
-            $adminMessages = [
-                'Команды администраторов:',
-                '<b>/add users</b> - добавить пользователей',
-                '<b>/delete users</b> - удалить пользователей',
-                '<b>/add accounts</b> - добавить аккаунты',
-                '<b>/add proxies</b> - добавить прокси',
-                '<b>/delete proxies</b> - очищает список прокси',
-                '<b>/notify all</b> - уведомление от лица администратора',
-            ];
+        if($this->user) {
+            if($this->user['role'] == User::ADMIN) {
+                $adminMessages = [
+                    'Команды администраторов:',
+                    '<b>/add users</b> - добавить пользователей',
+                    '<b>/delete users</b> - удалить пользователей',
+                    '<b>/add accounts</b> - добавить аккаунты',
+                    '<b>/add proxies</b> - добавить прокси',
+                    '<b>/delete proxies</b> - очищает список прокси',
+                    '<b>/notify all</b> - уведомление от лица администратора',
+                ];
 
-            $messages = array_merge_recursive($messages, $adminMessages);
+                $messages = array_merge($messages, $adminMessages);
+            }
+
+            if($this->user['role'] == User::MODERATOR) {
+                $adminMessages = [
+                    'Команды модераторов:',
+                    '<b>/add accounts</b> - добавить аккаунты',
+                ];
+
+                $messages = array_merge($messages, $adminMessages);
+            }
         }
 
         $message = implode(PHP_EOL, $messages);
@@ -175,7 +182,7 @@ class Bot {
 
     private function addAccounts()
     {
-        $this->checkRights();
+        $this->checkRights([User::ADMIN, User::MODERATOR]);
 
         $users = [];
 
@@ -206,7 +213,7 @@ class Bot {
 
     public function getAccounts()
     {
-        $this->checkRights();
+        $this->checkRights([User::ADMIN, User::MODERATOR]);
 
         $users = $this->parserCommand->getUsers();
 
@@ -279,16 +286,20 @@ class Bot {
 
     private function getUsers()
     {
-        $this->checkRights();
-        $users = User::all()->toArray();
+        $this->checkRights([User::ADMIN, User::MODERATOR]);
+
+        $users = User::query()
+            ->orderBy('member')
+            ->get();
 
         $message = '';
 
         foreach ($users as $user) {
-            if ($user['role'] == 'admin') $row = $user['username'] . ' (админ)';
+            if ($user['role'] == User::ADMIN) $row = $user['username'] . ' (админ)';
+            else if($user['role'] == User::MODERATOR) $row = $user['username'] . '(модератор)';
             else $row = $user['username'] . ':' . $user['limit'];
 
-            $message .= $row . "\n";
+            $message .= $row . PHP_EOL;
         }
 
         if ($message) $this->telegramCommand->sendMessageToChat($this->chatId, $message);

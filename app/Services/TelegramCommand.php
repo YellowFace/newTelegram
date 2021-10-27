@@ -46,15 +46,25 @@ class TelegramCommand
             ['📘 Помощь'],
         ];
 
-        if ($this->user && $this->user['role'] == 'admin') {
-            $adminKeyboard = [
-                ['👤 Пользователи'],
-                ['💻 Аккаунты'],
-                ['⚙ Прокси'],
-                ['Ссылок в ожидание обработки'],
-            ];
+        if($this->user) {
+            if ($this->user['role'] == User::ADMIN) {
+                $adminKeyboard = [
+                    ['👤 Пользователи'],
+                    ['💻 Аккаунты'],
+                    ['⚙ Прокси'],
+                    ['Ссылок в ожидание обработки'],
+                ];
 
-            $keyboard = array_merge($keyboard, $adminKeyboard);
+                $keyboard = array_merge($keyboard, $adminKeyboard);
+            }
+
+            if($this->user['role'] == User::MODERATOR) {
+                $moderatorKeyboard = [
+                    ['👤 Пользователи'],
+                ];
+
+                $keyboard = array_merge($keyboard, $moderatorKeyboard);
+            }
         }
 
         return json_encode([
