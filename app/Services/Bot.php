@@ -286,7 +286,7 @@ class Bot {
 
     private function getUsers()
     {
-        $this->checkRights([User::ADMIN, User::MODERATOR]);
+        $this->checkRights();
 
         $users = User::query()
             ->orderBy('role')

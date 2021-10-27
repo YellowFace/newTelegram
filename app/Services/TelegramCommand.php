@@ -60,7 +60,7 @@ class TelegramCommand
 
             if($this->user['role'] == User::MODERATOR) {
                 $moderatorKeyboard = [
-                    ['👤 Пользователи'],
+                    ['💻 Аккаунты'],
                 ];
 
                 $keyboard = array_merge($keyboard, $moderatorKeyboard);
