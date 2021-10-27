@@ -227,7 +227,8 @@ class Bot {
         if ($count > 50) $users = array_slice($users, -50);
 
         foreach ($users as $user) {
-            $message .= PHP_EOL . "{$user['login']}:{$user['password']}";
+            $message .= PHP_EOL . $user['login'];
+            if($this->user['role'] == User::ADMIN) $message .= ":{$user['password']}";
         }
 
         $this->telegramCommand->sendMessageToChat($this->chatId, $message);
