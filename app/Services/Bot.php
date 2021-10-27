@@ -289,7 +289,7 @@ class Bot {
         $this->checkRights([User::ADMIN, User::MODERATOR]);
 
         $users = User::query()
-            ->orderBy('member')
+            ->orderBy('role')
             ->get();
 
         $message = '';
