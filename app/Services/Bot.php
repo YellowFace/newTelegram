@@ -225,7 +225,10 @@ class Bot {
 
         $this->addLog('use command /get accounts');
 
-        $users = $this->parserCommand->getUsers();
+        $info = $this->parserCommand->getUsers();
+
+        $users = $info['users'];
+        $notUsed = $info['not_used'];
 
         if(!count($users)) {
             $this->telegramCommand->sendMessageToChat($this->chatId, 'Нет добавленных аккаунтов', true);
@@ -240,6 +243,8 @@ class Bot {
             $message .= PHP_EOL . $user['login'];
             if($this->user['role'] == User::ADMIN) $message .= ":{$user['password']}";
         }
+
+        $message .= PHP_EOL . "Не использованы: {$notUsed}";
 
         $this->telegramCommand->sendMessageToChat($this->chatId, $message);
     }
