@@ -368,8 +368,8 @@ class Bot {
     {
         foreach ($urls as $url) {
             if(mb_strlen($url) > 255) return false;
-            if(!preg_match('/^https:\/\/youla.(ru|io)\/.+/$', $url)) return false;
-            if(preg_match('/[\p{Cyrillic}]+/', $url)) return false;
+            if(!preg_match('/https:\/\/youla.(ru|io)\/.+/', $url)) return false;
+//            if(preg_match('/[\p{Cyrillic}]+/', $url)) return false;
         }
 
         return true;
