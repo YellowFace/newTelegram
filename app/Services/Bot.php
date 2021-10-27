@@ -296,7 +296,7 @@ class Bot {
 
         foreach ($users as $user) {
             if ($user['role'] == User::ADMIN) $row = $user['username'] . ' (админ)';
-            else if($user['role'] == User::MODERATOR) $row = $user['username'] . '(модератор)';
+            else if($user['role'] == User::MODERATOR) $row = $user['username'] . ':' . $user['limit'] . ' (модератор)';
             else $row = $user['username'] . ':' . $user['limit'];
 
             $message .= $row . PHP_EOL;
@@ -405,7 +405,7 @@ class Bot {
         }
 
         // Если пользователь не админ и лимит просмотров закончился, отклоняем запрос
-        if ($this->user['role'] == 'member' && count($links) > $this->user['limit']) {
+        if ($this->user['role'] != User::ADMIN && count($links) > $this->user['limit']) {
             $this->telegramCommand->sendMessageToChat($this->chatId, 'Превышен лимит просмотров', true);
         }
         else {
@@ -422,7 +422,7 @@ class Bot {
                     'link_id' => $link['id'],
                 ]);
 
-                if ($this->user['role'] == 'member') User::query()->where('id', $this->user['id'])->decrement('limit', count($links));
+                if ($this->user['role'] != User::ADMIN) User::query()->where('id', $this->user['id'])->decrement('limit', count($links));
             }
 
             $inProgress = $query['in_progress'] ?? -1;

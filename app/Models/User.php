@@ -8,7 +8,7 @@ class User extends Model
 {
     const ADMIN = 'admin';
     const MODERATOR = 'moderator';
-    const USER = 'member';
+    const MEMBER = 'member';
 
     protected $table = 'user';
 
