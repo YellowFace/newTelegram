@@ -364,28 +364,28 @@ class Bot {
         }
     }
 
+    private function isValidUrls($urls)
+    {
+        foreach ($urls as $url) {
+            if(mb_strlen($url) > 255) return false;
+            if(!preg_match('/^https:\/\/youla.(ru|io)\/.+/$', $url)) return false;
+            if(preg_match('/[\p{Cyrillic}]+/', $url)) return false;
+        }
+
+        return true;
+    }
+
     private function sendLinksForProcessing()
     {
         if($this->user['role'] == 'member' && getenv('BLOCK_SEND_LINKS')) {
             $this->telegramCommand->sendMessageToChat($this->chatId, "В данный момент идут тех. работы. Подождите.", true);
         }
 
-//        $count = Cache::remember('links_queue', CarbonInterval::minute(), function () {
-//            return $this->parserCommand->getQueueInfo();
-//        });
-//
-//        if($count >= 150) {
-//            $this->telegramCommand->sendMessageToChat($this->chatId, "Слишком много ссылок в оработке. Подождите. Осталось обработать: {$count} шт.", true);
-//        }
-
-        $links = [];
+        $links = $this->explodedMessage;
 
         // Валидация ссылок
-        foreach ($this->explodedMessage as $item) {
-            if (preg_match('/https:\/\/youla.(ru|io)\/.+/', $item)) $links[] = $item;
-            else {
-                $this->telegramCommand->sendMessageToChat($this->chatId, 'Неверный формат. Проверьте ссылки еще раз.', true);
-            }
+        if(!$this->isValidUrls($links)) {
+            $this->telegramCommand->sendMessageToChat($this->chatId, 'Неверный формат. Проверьте ссылки еще раз.', true);
         }
 
         // Ограничение на количество ссылок
