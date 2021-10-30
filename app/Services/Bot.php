@@ -225,11 +225,10 @@ class Bot {
     {
         $this->checkRights([User::ADMIN, User::MODERATOR]);
 
-        $this->addLog('use command /get accounts');
-
         $info = $this->parserCommand->getUsers();
 
         $users = collect($info['users']);
+
         $notUsed = $info['not_used'];
 
         if(!count($users)) {
@@ -241,7 +240,7 @@ class Bot {
         $tableGenerator = new Asciitable();
 
         foreach ($users->chunk(50) as $users) {
-            $table = $tableGenerator->make_table($users, 'Users', true);
+            $table = $tableGenerator->make_table($users, 'Accounts', true);
 
             $message = "<pre>{$table}</pre>";
             $this->telegramCommand->sendMessageToChat($this->chatId, $message, false, true);
