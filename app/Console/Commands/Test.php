@@ -3,8 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\User;
-use App\Services\Bot;
-use App\Services\ParserCommand;
+use App\Services\Asciitable;
 use Illuminate\Console\Command;
 
 class Test extends Command
@@ -15,35 +14,24 @@ class Test extends Command
 
     public function handle()
     {
-        $this->parserCommand = new ParserCommand();
+        $users = User::all();
 
-        $info = $this->parserCommand->getUsers();
-
-        $users = $info['users'];
-        $notUsed = $info['not_used'];
-
-        $count = count($users);
-
-        $message = 'Login:Password/Раз входил/Вытащил ссылок';
-
-//        if($this->user['role'] != User::ADMIN) $message = str_replace(':Password', '', $message);
-
-        $users = collect($users);
-
-        foreach ($users->chunk(50) as $index => $users) {
-            if($index) $message = '';
-
-            foreach ($users as $user) {
-
-                $message .= PHP_EOL . $user['login'];
-//                    if($this->user['role'] == User::ADMIN) $message .= ":{$user['password']}";
-                $message .= '/' . $user['attempts'];
-                $message .= '/' . $user['parsed_success'];
-            }
+        foreach ($users->chunk(3) as $users) {
+            dd($users);
         }
 
-        $message .= PHP_EOL . PHP_EOL . "Всего: {$count} шт., чистые: {$notUsed} шт.";
+        $data = [
+            ['id' => 1, 'name' => 'Tom', 'status' => 'active'],
+            ['id' => 2, 'name' => 'Nick', 'status' => 'disabled'],
+            ['id' => 3, 'name' => 'Peter', 'status' => 'active'],
+        ];
 
-        return Command::SUCCESS;
+        $tableGenerator = new Asciitable();
+
+        $table = $tableGenerator->make_table($data, 'Accounts', true);
+
+        echo "<pre>$table</pre>";
+
+//        print_r(Asciitable::scrape_table($table,'name','status'));
     }
 }

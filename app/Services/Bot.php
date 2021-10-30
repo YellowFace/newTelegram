@@ -159,6 +159,8 @@ class Bot {
             }
         }
 
+        $messages[] = 'Разработчик: @developer_123';
+
         $message = implode(PHP_EOL, $messages);
 
         $this->telegramCommand->sendMessageToChat($this->chatId, $message, false, true);
@@ -236,27 +238,18 @@ class Bot {
 
         $count = count($users);
 
-        $message = 'Login:Password/Раз входил/Вытащил ссылок';
+        $tableGenerator = new Asciitable();
 
-        if($this->user['role'] != User::ADMIN) $message = str_replace(':Password', '', $message);
+        foreach ($users->chunk(50) as $users) {
+            $table = $tableGenerator->make_table($users, 'Users', true);
 
-        $users = collect($users);
+            $message = "<pre>{$table}</pre>";
 
-        foreach ($users->chunk(50) as $index =>  $users) {
-            if($index) $message = '';
-
-            foreach ($users as $user) {
-                $message .= PHP_EOL . $user['login'];
-                if($this->user['role'] == User::ADMIN) $message .= ":{$user['password']}";
-                $message .= '/' . $user['attempts'];
-                $message .= '/' . $user['parsed_success'];
-            }
-
-            $this->telegramCommand->sendMessageToChat($this->chatId, $message);
+            $this->telegramCommand->sendMessageToChat($this->chatId, $message, false, true);
         }
 
-        $message .= PHP_EOL . PHP_EOL . "Всего: {$count} шт., чистые: {$notUsed} шт.";
-        $this->telegramCommand->sendMessageToChat($this->chatId, $message);
+        $message .= PHP_EOL . PHP_EOL . "Всего: {$count} шт, чистые: {$notUsed} шт.";
+        $this->telegramCommand->sendMessageToChat($this->chatId, $message, false, true);
 
     }
 
