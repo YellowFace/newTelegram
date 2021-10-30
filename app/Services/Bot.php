@@ -255,7 +255,7 @@ class Bot {
             $this->telegramCommand->sendMessageToChat($this->chatId, $message);
         }
 
-        $message .= PHP_EOL . PHP_EOL . "Всего: {$count} шт., чистые: {$notUsed} шт.";
+        $message = PHP_EOL . PHP_EOL . "Всего: {$count} шт., чистые: {$notUsed} шт.";
         $this->telegramCommand->sendMessageToChat($this->chatId, $message);
 
     }
