@@ -48,9 +48,6 @@ class IndexController extends Controller
             return json_encode($response);
         }
 
-        /** @var Query $query */
-        $query = Query::query()->firstWhere('link_id', $data['id']);
-
         $user = User::query()->findOrFail($data['user']);
 
         $telegramCommand = new TelegramCommand($this->telegram);
@@ -75,7 +72,6 @@ class IndexController extends Controller
         }
 
         $telegramCommand->sendMessageToChat($user['chat_id'], $message, false, true, true);
-        $query->update(['status' => 'success']);
 
         $response['result'] = 'success';
         return json_encode($response);

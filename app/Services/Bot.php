@@ -433,14 +433,7 @@ class Bot {
                 $this->telegramCommand->sendMessageToChat($this->chatId, $message, true);
             }
 
-            foreach ($query['links'] as $link) {
-                Query::query()->create([
-                    'user_id' => $this->user['id'],
-                    'link_id' => $link['id'],
-                ]);
-
-                if ($this->user['role'] != User::ADMIN) User::query()->where('id', $this->user['id'])->decrement('limit', count($links));
-            }
+            if ($this->user['role'] != User::ADMIN) User::query()->where('id', $this->user['id'])->decrement('limit', count($links));
 
             $inProgress = $query['in_progress'] ?? -1;
 
