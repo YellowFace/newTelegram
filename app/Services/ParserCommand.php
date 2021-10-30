@@ -24,7 +24,8 @@ class ParserCommand
         ];
 
         $response = $this->client->post($this->serverIp . '/api/links', [
-            RequestOptions::JSON => $data
+            RequestOptions::JSON => $data,
+            'Accept' => 'application/json'
         ]);
 
         $response = $response->getBody()->getContents();
