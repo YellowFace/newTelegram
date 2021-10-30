@@ -242,17 +242,17 @@ class Bot {
 
         $users = collect($users);
 
-        foreach ($users->chunk(50) as $chunk) {
-            foreach ($chunk as $users) {
-                foreach ($users as $user) {
-                    $message .= PHP_EOL . $user['login'];
-                    if($this->user['role'] == User::ADMIN) $message .= ":{$user['password']}";
-                    $message .= '/' . $user['attempts'];
-                    $message .= '/' . $user['parsed_success'];
-                }
+        foreach ($users->chunk(50) as $index =>  $users) {
+            if($index) $message = '';
 
-                $this->telegramCommand->sendMessageToChat($this->chatId, $message);
+            foreach ($users as $user) {
+                $message .= PHP_EOL . $user['login'];
+                if($this->user['role'] == User::ADMIN) $message .= ":{$user['password']}";
+                $message .= '/' . $user['attempts'];
+                $message .= '/' . $user['parsed_success'];
             }
+
+            $this->telegramCommand->sendMessageToChat($this->chatId, $message);
         }
 
         $message .= PHP_EOL . PHP_EOL . "Всего: {$count} шт., чистые: {$notUsed} шт.";

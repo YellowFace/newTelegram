@@ -2,7 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\Models\User;
 use App\Services\Bot;
+use App\Services\ParserCommand;
 use Illuminate\Console\Command;
 
 class Test extends Command
@@ -13,14 +15,34 @@ class Test extends Command
 
     public function handle()
     {
-        $urls = [
-          'https://youla.ru/moskva/smartfony-planshety/smartfony/samsung-galaxy-a21s-32gb-6170240c39e9b244312e1b1f',
-          'https://youla.ru/lyubertsy/smartfony-planshety/smartfony/samsung-galaxy-a10-60c1421b549c927b70391d3e'
-        ];
+        $this->parserCommand = new ParserCommand();
 
-        $check = Bot::isValidUrls($urls);
+        $info = $this->parserCommand->getUsers();
 
-        dd($check);
+        $users = $info['users'];
+        $notUsed = $info['not_used'];
+
+        $count = count($users);
+
+        $message = 'Login:Password/Раз входил/Вытащил ссылок';
+
+//        if($this->user['role'] != User::ADMIN) $message = str_replace(':Password', '', $message);
+
+        $users = collect($users);
+
+        foreach ($users->chunk(50) as $index => $users) {
+            if($index) $message = '';
+
+            foreach ($users as $user) {
+
+                $message .= PHP_EOL . $user['login'];
+//                    if($this->user['role'] == User::ADMIN) $message .= ":{$user['password']}";
+                $message .= '/' . $user['attempts'];
+                $message .= '/' . $user['parsed_success'];
+            }
+        }
+
+        $message .= PHP_EOL . PHP_EOL . "Всего: {$count} шт., чистые: {$notUsed} шт.";
 
         return Command::SUCCESS;
     }
