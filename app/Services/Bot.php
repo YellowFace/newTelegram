@@ -229,7 +229,7 @@ class Bot {
 
         $info = $this->parserCommand->getUsers();
 
-        $users = $info['users'];
+        $users = collect($info['users']);
         $notUsed = $info['not_used'];
 
         if(!count($users)) {
