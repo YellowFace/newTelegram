@@ -235,18 +235,29 @@ class Bot {
         }
 
         $count = count($users);
-        $message = 'Добавлено ' . $count . ' аккаунтов:' . "\n";
 
-        if ($count > 50) $users = array_slice($users, -50);
+        $message = 'Login:Password/Раз входил/Вытащил ссылок';
 
-        foreach ($users as $user) {
-            $message .= PHP_EOL . $user['login'];
-            if($this->user['role'] == User::ADMIN) $message .= ":{$user['password']}";
+        if($this->user['role'] != User::ADMIN) $message = str_replace(':Password', '', $message);
+
+        $users = collect($users);
+
+        foreach ($users->chunk(50) as $chunk) {
+            foreach ($chunk as $users) {
+                foreach ($users as $user) {
+                    $message .= PHP_EOL . $user['login'];
+                    if($this->user['role'] == User::ADMIN) $message .= ":{$user['password']}";
+                    $message .= '/' . $user['attempts'];
+                    $message .= '/' . $user['parsed_success'];
+                }
+
+                $this->telegramCommand->sendMessageToChat($this->chatId, $message);
+            }
         }
 
-        $message .= PHP_EOL . PHP_EOL . "Не использованы: {$notUsed}";
-
+        $message .= PHP_EOL . PHP_EOL . "Всего: {$count} шт., чистые: {$notUsed} шт.";
         $this->telegramCommand->sendMessageToChat($this->chatId, $message);
+
     }
 
     private function addUsers()

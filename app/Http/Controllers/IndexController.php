@@ -65,7 +65,7 @@ class IndexController extends Controller
 
         if(strlen($user['default_message']) && str_contains($data['result'], 'wa.me')) {
 
-            $defaultMessage = $data['url'] . PHP_EOL . $user['default_message'];
+            $defaultMessage = ($user['default_message'] ?? 'Ещё актуально?') . PHP_EOL . $data['url'];
 
             $params = http_build_query([
                 'text' => $defaultMessage
