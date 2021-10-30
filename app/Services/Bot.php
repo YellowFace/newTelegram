@@ -244,13 +244,11 @@ class Bot {
             $table = $tableGenerator->make_table($users, 'Users', true);
 
             $message = "<pre>{$table}</pre>";
-
             $this->telegramCommand->sendMessageToChat($this->chatId, $message, false, true);
         }
 
-        $message .= PHP_EOL . PHP_EOL . "Всего: {$count} шт, чистые: {$notUsed} шт.";
+        $message = "Всего: {$count} шт, чистые: {$notUsed} шт.";
         $this->telegramCommand->sendMessageToChat($this->chatId, $message, false, true);
-
     }
 
     private function addUsers()
