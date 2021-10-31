@@ -2,8 +2,12 @@
 
 namespace App\Services;
 
+use Carbon\Carbon;
+use Carbon\CarbonInterval;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class ParserCommand
 {
@@ -51,9 +55,17 @@ class ParserCommand
 
     public function getUsers()
     {
-        $response = $this->client->get($this->serverIp . '/api/users');
+        $response = Cache::remember('get-users', CarbonInterval::minute(), function () {
+            try {
+                $response = $this->client->get($this->serverIp . '/api/users');
 
-        $response = $response->getBody()->getContents();
+                return $response->getBody()->getContents();
+            }
+            catch (\Exception $exception) {
+                Log::error($exception);
+                return [];
+            }
+        });
 
         return json_decode($response, true);
     }
@@ -84,11 +96,19 @@ class ParserCommand
 
     public function getQueueInfo()
     {
-        $response = $this->client->get($this->serverIp . '/api/links/queue/count');
+        $response = Cache::remember('get-queue-info', CarbonInterval::minute(), function () {
+            try {
+                $response = $this->client->get($this->serverIp . '/api/links/queue/count');
 
-        $response = $response->getBody()->getContents();
+                $response = $response->getBody()->getContents();
 
-        $response = json_decode($response, true);
+                return json_decode($response, true);
+            }
+            catch (\Exception $exception) {
+                Log::error($exception);
+                return [];
+            }
+        });
 
         return $response['count'] ?? -1;
     }

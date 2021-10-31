@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\Query;
 use App\Models\User;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class Bot {
@@ -280,6 +280,8 @@ class Bot {
                 ]);
             }
         }
+
+        Cache::forget('get-users');
 
         $this->telegramCommand->sendMessageToChat($this->chatId, 'Пользователи успешно добавлены');
     }
