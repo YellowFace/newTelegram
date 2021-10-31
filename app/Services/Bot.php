@@ -309,19 +309,16 @@ class Bot {
 
         $users = User::query()
             ->orderBy('role')
-            ->get();
+            ->get(['username', 'role', 'limit']);
 
-        $message = '';
 
-        foreach ($users as $user) {
-            if ($user['role'] == User::ADMIN) $row = $user['username'] . ' (админ)';
-            else if($user['role'] == User::MODERATOR) $row = $user['username'] . ':' . $user['limit'] . ' (модератор)';
-            else $row = $user['username'] . ':' . $user['limit'];
+        $tableGenerator = new Asciitable();
 
-            $message .= $row . PHP_EOL;
-        }
+        $table = $tableGenerator->make_table($users, 'Users', true);
 
-        if ($message) $this->telegramCommand->sendMessageToChat($this->chatId, $message);
+        $message = "<pre>{$table}</pre>";
+
+        $this->telegramCommand->sendMessageToChat($this->chatId, $message);
     }
 
     private function addProxies()
