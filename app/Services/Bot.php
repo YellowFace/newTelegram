@@ -318,7 +318,7 @@ class Bot {
 
         $message = "<pre>{$table}</pre>";
 
-        $this->telegramCommand->sendMessageToChat($this->chatId, $message);
+        $this->telegramCommand->sendMessageToChat($this->chatId, $message, false, true);
     }
 
     private function addProxies()
