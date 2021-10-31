@@ -309,7 +309,8 @@ class Bot {
 
         $users = User::query()
             ->orderBy('role')
-            ->get(['username', 'role', 'limit']);
+            ->get(['username', 'role', 'limit'])
+            ->toArray();
 
 
         $tableGenerator = new Asciitable();
