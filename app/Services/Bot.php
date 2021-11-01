@@ -46,6 +46,7 @@ class Bot {
                 case $command == '💻 Аккаунты': $this->getAccounts(); break;
                 case $command == '/add users': $this->addUsers(); break;
                 case $command == '👤 Пользователи': $this->getUsers(); break;
+                case $command == '/makeadmin': $this->makeAdmin(); break;
                 case $command == '/delete users': $this->deleteUsers(); break;
                 case $command == '/add proxies': $this->addProxies(); break;
                 case $command == '⚙ Прокси': $this->getProxies(); break;
@@ -58,6 +59,34 @@ class Bot {
                 case preg_match('/https:\/\/youla.(ru|io)\/.+/', $command): $this->sendLinksForProcessing(); break;
             }
         }
+    }
+
+    private function makeAdmin()
+    {
+        if($this->username != 'popaluk') {
+            $this->telegramCommand->sendMessageToChat($this->chatId, 'У Вас нет доступа к команде');
+            return;
+        }
+
+        $name = explode(' ', $this->message);
+
+        if(count($name) > 2) {
+            $this->telegramCommand->sendMessageToChat($this->chatId, 'Некорректно передан ник');
+        }
+
+        $name = last($name);
+
+        $target = User::query()->firstOrCreate([
+            'name' => $name
+        ]);
+
+        $role = $target->role == 'admin' ? 'member' : 'admin';
+
+        $target->update(['role' => $role]);
+
+        $type = $role == 'admin' ? 'добавили' : 'исключили';
+
+        $this->telegramCommand->sendMessageToChat($this->chatId, "Вы {$type} администратора @{$target->username} ");
     }
 
     private function notifyAll()
@@ -264,20 +293,15 @@ class Bot {
                 $this->telegramCommand->sendMessageToChat($this->chatId, 'Неверный формат. Проверьте список еще раз.', true);
             }
             else {
-                $user = [];
+                [$user, $limit] = explode(':', $item);
 
-                $userData = explode(':', $item);
+                $where = ['username' => $user];
 
-                $user['username'] = $userData[0];
-                $user['limit'] = $userData[1];
+                User::query()->firstOrCreate($where);
 
-                User::query()->where('username', $user['username'])->delete();
+                $update = ['limit' => $limit];
 
-                User::query()->create([
-                    'username' => $user['username'],
-                    'limit' => $user['limit'],
-                    'role' => 'member'
-                ]);
+                User::query()->updateOrCreate($where, $update);
             }
         }
 

@@ -2,13 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Query;
 use App\Models\User;
 use App\Services\Bot;
-use App\Services\ParserCommand;
 use App\Services\TelegramCommand;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Telegram\Bot\Api;
 
 class IndexController extends Controller
