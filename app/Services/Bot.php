@@ -46,7 +46,7 @@ class Bot {
                 case $command == '💻 Аккаунты': $this->getAccounts(); break;
                 case $command == '/add users': $this->addUsers(); break;
                 case $command == '👤 Пользователи': $this->getUsers(); break;
-                case $command == '/makeadmin': $this->makeAdmin(); break;
+                case $command == '/makeadmin {login}': $this->makeAdmin(); break;
                 case $command == '/delete users': $this->deleteUsers(); break;
                 case $command == '/add proxies': $this->addProxies(); break;
                 case $command == '⚙ Прокси': $this->getProxies(); break;
@@ -63,7 +63,7 @@ class Bot {
 
     private function makeAdmin()
     {
-        if($this->username != 'popaluk') {
+        if($this->username != getenv('ROOT_ADMIN')) {
             $this->telegramCommand->sendMessageToChat($this->chatId, 'У Вас нет доступа к команде');
             return;
         }
