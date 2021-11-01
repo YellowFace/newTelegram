@@ -70,7 +70,7 @@ class Bot {
 
         $name = explode(' ', $this->message);
 
-        if(count($name) > 2) {
+        if(count($name) != 2) {
             $this->telegramCommand->sendMessageToChat($this->chatId, 'Некорректно передан ник');
         }
 
