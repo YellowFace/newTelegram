@@ -84,7 +84,7 @@ class Bot
         $name = explode(' ', $this->message);
 
         if (count($name) != 2) {
-            $this->telegramCommand->sendMessageToChat($this->chatId, 'Некорректно передан ник');
+            $this->telegramCommand->sendMessageToChat($this->chatId, 'Некорректно передан ник, пример: /makeadmin login');
         }
 
         $name = last($name);
@@ -112,7 +112,7 @@ class Bot
         $name = explode(' ', $this->message);
 
         if (count($name) != 2) {
-            $this->telegramCommand->sendMessageToChat($this->chatId, 'Некорректно передан ник');
+            $this->telegramCommand->sendMessageToChat($this->chatId, 'Некорректно передан ник, пример: /makemoderator login');
         }
 
         $name = last($name);
