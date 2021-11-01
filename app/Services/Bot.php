@@ -53,6 +53,7 @@ class Bot
                 '/add users' => 'addUsers',
                 '👤 Пользователи' => 'getUsers',
                 '/makeadmin' => 'makeAdmin',
+                '/makemoderator' => 'makeModerator',
                 '/delete users' => 'deleteUsers',
                 '/add proxies' => 'addProxies',
                 '⚙ Прокси' => 'getProxies',
@@ -99,6 +100,34 @@ class Bot
         $type = $role == 'admin' ? 'добавили' : 'исключили';
 
         $this->telegramCommand->sendMessageToChat($this->chatId, "Вы {$type} администратора: @{$target->username} ");
+    }
+
+    private function makeModerator()
+    {
+        if ($this->username != getenv('ROOT_ADMIN')) {
+            $this->telegramCommand->sendMessageToChat($this->chatId, 'У Вас нет доступа к команде');
+            return;
+        }
+
+        $name = explode(' ', $this->message);
+
+        if (count($name) != 2) {
+            $this->telegramCommand->sendMessageToChat($this->chatId, 'Некорректно передан ник');
+        }
+
+        $name = last($name);
+
+        $target = User::query()->firstOrCreate([
+            'username' => $name
+        ]);
+
+        $role = $target->role == User::MODERATOR ? User::MEMBER : User::MODERATOR;
+
+        $target->update(['role' => $role]);
+
+        $type = $role == User::MODERATOR ? 'добавили' : 'исключили';
+
+        $this->telegramCommand->sendMessageToChat($this->chatId, "Вы {$type} модератора: @{$target->username} ");
     }
 
     private function notifyAll()
