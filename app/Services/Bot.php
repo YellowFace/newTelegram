@@ -89,7 +89,7 @@ class Bot
         $name = last($name);
 
         $target = User::query()->firstOrCreate([
-            'name' => $name
+            'username' => $name
         ]);
 
         $role = $target->role == 'admin' ? 'member' : 'admin';
