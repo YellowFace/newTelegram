@@ -339,10 +339,10 @@ class Bot
             return;
         }
 
-        $user = $params[2];
+        $username = $params[2];
         $limit = $params[3];
 
-        $where = ['username' => $user];
+        $where = ['username' => $username];
         User::query()->firstOrCreate($where);
 
         $update = ['limit' => $limit];
@@ -350,7 +350,7 @@ class Bot
 
         Cache::forget('get-users');
 
-        $this->telegramCommand->sendMessageToChat($this->chatId, 'Пользователь обновлён');
+        $this->telegramCommand->sendMessageToChat($this->chatId, "Пользователю @{$username} был установлен лимит: {$limit}");
     }
 
     private function deleteUser()
@@ -368,7 +368,7 @@ class Bot
 
         User::query()->where('username', $username)->delete();
 
-        $this->telegramCommand->sendMessageToChat($this->chatId, 'Пользователи успешно удалены');
+        $this->telegramCommand->sendMessageToChat($this->chatId, "Пользователь @{$username} был удалён");
     }
 
     private function getUsers()
