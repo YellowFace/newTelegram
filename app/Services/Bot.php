@@ -98,7 +98,7 @@ class Bot
 
         $type = $role == 'admin' ? 'добавили' : 'исключили';
 
-        $this->telegramCommand->sendMessageToChat($this->chatId, "Вы {$type} администратора @{$target->username} ");
+        $this->telegramCommand->sendMessageToChat($this->chatId, "Вы {$type} администратора: @{$target->username} ");
     }
 
     private function notifyAll()
