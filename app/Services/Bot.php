@@ -50,11 +50,11 @@ class Bot
                 '/start' => 'start',
                 '/add accounts' => 'addAccounts',
                 '💻 Аккаунты' => 'getAccounts',
-                '/add users' => 'addUsers',
+                '/add user' => 'addUser',
                 '👤 Пользователи' => 'getUsers',
-                '/makeadmin' => 'makeAdmin',
-                '/makemoderator' => 'makeModerator',
-                '/delete users' => 'deleteUsers',
+                '/make admin' => 'makeAdmin',
+                '/make moderator' => 'makeModerator',
+                '/delete user' => 'deleteUser',
                 '/add proxies' => 'addProxies',
                 '⚙ Прокси' => 'getProxies',
                 '📘 Помощь' => 'sendHelpMessage',
@@ -83,8 +83,8 @@ class Bot
 
         $name = explode(' ', $this->message);
 
-        if (count($name) != 2) {
-            $this->telegramCommand->sendMessageToChat($this->chatId, 'Некорректно передан ник, пример: /makeadmin login');
+        if (count($name) != 3) {
+            $this->telegramCommand->sendMessageToChat($this->chatId, 'Некорректно передан ник, пример: /make admin {login}');
         }
 
         $name = last($name);
@@ -111,8 +111,8 @@ class Bot
 
         $name = explode(' ', $this->message);
 
-        if (count($name) != 2) {
-            $this->telegramCommand->sendMessageToChat($this->chatId, 'Некорректно передан ник, пример: /makemoderator login');
+        if (count($name) != 3) {
+            $this->telegramCommand->sendMessageToChat($this->chatId, 'Некорректно передан ник, пример: /make moderator {login}');
         }
 
         $name = last($name);
@@ -204,6 +204,16 @@ class Bot
         ];
 
         if ($this->user) {
+            if($this->username == getenv('ROOT_ADMIN')) {
+                $rootMessages = [
+                    'Команды гл. администратора:',
+                    '<b>/make admin</b> - добавить или снять администратора',
+                    '<b>/make moderator</b> - добавить или снять модератора',
+                ];
+
+                $messages = array_merge($messages, $rootMessages);
+            }
+
             if ($this->user['role'] == User::ADMIN) {
                 $adminMessages = [
                     'Команды администраторов:',
@@ -318,49 +328,45 @@ class Bot
         $this->telegramCommand->sendMessageToChat($this->chatId, $message, false, true);
     }
 
-    private function addUsers()
+    private function addUser()
     {
         $this->checkRights();
 
-        $items = $this->explodedMessage;
-        unset($items[0]);
+        $params = explode(' ', $this->message);
 
-        foreach ($items as $item) {
-            $item = str_replace(' ', '', $item);
-
-            if (!preg_match('/^[a-z0-9_]+:\d+$/', $item)) {
-                $this->telegramCommand->sendMessageToChat($this->chatId, 'Неверный формат. Проверьте список еще раз.', true);
-            } else {
-                [$user, $limit] = explode(':', $item);
-
-                $where = ['username' => $user];
-
-                User::query()->firstOrCreate($where);
-
-                $update = ['limit' => $limit];
-
-                User::query()->updateOrCreate($where, $update);
-            }
+        if(count($params) != 4) {
+            $this->telegramCommand->sendMessageToChat($this->chatId, 'Вы неправильно передали параметры, пример: /add user {login} {limit}');
+            return;
         }
+
+        $user = $params[2];
+        $limit = $params[3];
+
+        $where = ['username' => $user];
+        User::query()->firstOrCreate($where);
+
+        $update = ['limit' => $limit];
+        User::query()->updateOrCreate($where, $update);
 
         Cache::forget('get-users');
 
-        $this->telegramCommand->sendMessageToChat($this->chatId, 'Пользователи успешно добавлены');
+        $this->telegramCommand->sendMessageToChat($this->chatId, 'Пользователь обновлён');
     }
 
-    private function deleteUsers()
+    private function deleteUser()
     {
         $this->checkRights();
 
-        $items = $this->explodedMessage;
-        unset($items[0]);
+        $params = explode(' ', $this->message);
 
-        foreach ($items as $item) {
-            $item = str_replace(' ', '', $item);
-
-            User::query()->where('username', $item)->delete();
-
+        if(count($params) != 3) {
+            $this->telegramCommand->sendMessageToChat($this->chatId, 'Вы неправильно передали параметры, пример: /delete user {login}');
+            return;
         }
+
+        $username = last($params);
+
+        User::query()->where('username', $username)->delete();
 
         $this->telegramCommand->sendMessageToChat($this->chatId, 'Пользователи успешно удалены');
     }
