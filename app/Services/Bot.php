@@ -6,7 +6,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
-class Bot {
+class Bot
+{
 
     private $chatId;
     private $username;
@@ -40,37 +41,48 @@ class Bot {
 
             $command = trim($this->explodedMessage[0]);
 
-            switch (true) {
-                case $command == '/start': $this->start(); break;
-                case $command == '/add accounts': $this->addAccounts(); break;
-                case $command == '💻 Аккаунты': $this->getAccounts(); break;
-                case $command == '/add users': $this->addUsers(); break;
-                case $command == '👤 Пользователи': $this->getUsers(); break;
-                case $command == '/makeadmin {login}': $this->makeAdmin(); break;
-                case $command == '/delete users': $this->deleteUsers(); break;
-                case $command == '/add proxies': $this->addProxies(); break;
-                case $command == '⚙ Прокси': $this->getProxies(); break;
-                case $command == '📘 Помощь': $this->sendHelpMessage(); break;
-                case $command == 'Ссылок в ожидание обработки': $this->showQueueInfo(); break;
-                case $command == '/delete proxies': $this->deleteProxies(); break;
-                case $command == '/delete accounts': $this->deleteAccounts(); break;
-                case $command == '/default message': $this->defaultMessage(); break;
-                case $command == '/notify all': $this->notifyAll(); break;
-                case preg_match('/https:\/\/youla.(ru|io)\/.+/', $command): $this->sendLinksForProcessing(); break;
+            if (preg_match('/https:\/\/youla.(ru|io)\/.+/', $command)) {
+                $this->sendLinksForProcessing();
+                return;
+            }
+
+            $commands = [
+                '/start' => 'start',
+                '/add accounts' => 'addAccounts',
+                '💻 Аккаунты' => 'getAccounts',
+                '/add users' => 'addUsers',
+                '👤 Пользователи' => 'getUsers',
+                '/makeadmin' => 'makeAdmin',
+                '/delete users' => 'deleteUsers',
+                '/add proxies' => 'addProxies',
+                '⚙ Прокси' => 'getProxies',
+                '📘 Помощь' => 'sendHelpMessage',
+                'Ссылок в ожидание обработки' => 'showQueueInfo',
+                '/delete proxies' => 'deleteProxies',
+                '/delete accounts' => 'deleteAccounts',
+                '/default message' => 'defaultMessage',
+                '/notify all' => 'notifyAll',
+            ];
+
+            foreach ($commands as $cmd => $method) {
+                if(!str_contains($command, $cmd)) continue;
+
+                call_user_func_array([$this, $method], []);
+                return;
             }
         }
     }
 
     private function makeAdmin()
     {
-        if($this->username != getenv('ROOT_ADMIN')) {
+        if ($this->username != getenv('ROOT_ADMIN')) {
             $this->telegramCommand->sendMessageToChat($this->chatId, 'У Вас нет доступа к команде');
             return;
         }
 
         $name = explode(' ', $this->message);
 
-        if(count($name) != 2) {
+        if (count($name) != 2) {
             $this->telegramCommand->sendMessageToChat($this->chatId, 'Некорректно передан ник');
         }
 
@@ -104,11 +116,10 @@ class Bot {
         $chats = User::query()->whereNotNull('chat_id')->pluck('chat_id')->toArray();
 
         foreach ($chats as $index => $chat) {
-            if($index != 0 && ($index % 30) == 0) sleep(1); //лимит телеграма на 30 в секунду todo global
+            if ($index != 0 && ($index % 30) == 0) sleep(1); //лимит телеграма на 30 в секунду todo global
             try {
                 $this->telegramCommand->sendMessageToChat($chat, $message);
-            }
-            catch (\Exception $exception) {
+            } catch (\Exception $exception) {
                 continue;
             }
         }
@@ -131,9 +142,9 @@ class Bot {
     }
 
 
-    private function checkRights($roles = [ User::ADMIN ])
+    private function checkRights($roles = [User::ADMIN])
     {
-        if(in_array($this->user['role'], $roles)) return true;
+        if (in_array($this->user['role'], $roles)) return true;
 
         $this->telegramCommand->sendMessageToChat($this->chatId, 'У вас нет доступа к этой команде', true);
     }
@@ -163,8 +174,8 @@ class Bot {
             '<b>/default message</b> - подставка сообщения в WhatsApp',
         ];
 
-        if($this->user) {
-            if($this->user['role'] == User::ADMIN) {
+        if ($this->user) {
+            if ($this->user['role'] == User::ADMIN) {
                 $adminMessages = [
                     'Команды администраторов:',
                     '<b>/add users</b> - добавить пользователей',
@@ -178,7 +189,7 @@ class Bot {
                 $messages = array_merge($messages, $adminMessages);
             }
 
-            if($this->user['role'] == User::MODERATOR) {
+            if ($this->user['role'] == User::MODERATOR) {
                 $adminMessages = [
                     'Команды модераторов:',
                     '<b>/add accounts</b> - добавить аккаунты',
@@ -203,7 +214,7 @@ class Bot {
 
         $message = implode(PHP_EOL, $messages);
 
-        if(strlen($message) > 500) {
+        if (strlen($message) > 500) {
             $this->telegramCommand->sendMessageToChat($this->chatId, 'Ошибка: Слишком длинное сообщение.', true);
         }
 
@@ -228,8 +239,7 @@ class Bot {
 
             if (!preg_match('/.+:.+/', $item)) {
                 $this->telegramCommand->sendMessageToChat($this->chatId, 'Неверный формат. Проверьте список еще раз.', true);
-            }
-            else {
+            } else {
                 $user = [];
 
                 $loginPass = explode(':', $item);
@@ -260,7 +270,7 @@ class Bot {
 
         $notUsed = $info['not_used'];
 
-        if(!count($users)) {
+        if (!count($users)) {
             $this->telegramCommand->sendMessageToChat($this->chatId, 'Нет добавленных аккаунтов', true);
         }
 
@@ -291,8 +301,7 @@ class Bot {
 
             if (!preg_match('/^[a-z0-9_]+:\d+$/', $item)) {
                 $this->telegramCommand->sendMessageToChat($this->chatId, 'Неверный формат. Проверьте список еще раз.', true);
-            }
-            else {
+            } else {
                 [$user, $limit] = explode(':', $item);
 
                 $where = ['username' => $user];
@@ -360,8 +369,7 @@ class Bot {
 
             if (!preg_match('/.+:.+/', $item)) {
                 $this->telegramCommand->sendMessageToChat($this->chatId, 'Неверный формат. Проверьте список еще раз.', true);
-            }
-            else {
+            } else {
                 $proxy = [];
 
                 $proxy['host'] = $item;
@@ -419,9 +427,9 @@ class Bot {
     public static function isValidUrls($urls): bool
     {
         foreach ($urls as $url) {
-            if(mb_strlen($url) > 255) return false;
-            if(!preg_match('/^https:\/\/youla.(ru|io)\/.+/', $url)) return false;
-            if(preg_match('/[А-Яа-яЁё]+/', $url)) return false;
+            if (mb_strlen($url) > 255) return false;
+            if (!preg_match('/^https:\/\/youla.(ru|io)\/.+/', $url)) return false;
+            if (preg_match('/[А-Яа-яЁё]+/', $url)) return false;
         }
 
         return true;
@@ -429,14 +437,14 @@ class Bot {
 
     private function sendLinksForProcessing()
     {
-        if($this->user['role'] == 'member' && getenv('BLOCK_SEND_LINKS')) {
+        if ($this->user['role'] == 'member' && getenv('BLOCK_SEND_LINKS')) {
             $this->telegramCommand->sendMessageToChat($this->chatId, "В данный момент идут тех. работы. Подождите.", true);
         }
 
         $links = $this->explodedMessage;
 
         // Валидация ссылок
-        if(!self::isValidUrls($links)) {
+        if (!self::isValidUrls($links)) {
             $this->telegramCommand->sendMessageToChat($this->chatId, 'Неверный формат. Проверьте ссылки еще раз.', true);
         }
 
@@ -448,11 +456,10 @@ class Bot {
         // Если пользователь не админ и лимит просмотров закончился, отклоняем запрос
         if ($this->user['role'] != User::ADMIN && count($links) > $this->user['limit']) {
             $this->telegramCommand->sendMessageToChat($this->chatId, 'Превышен лимит просмотров', true);
-        }
-        else {
+        } else {
             $query = $this->parserCommand->sendLinksForProcessing($links, $this->user['id']);
 
-            if($query['code'] != 0) {
+            if ($query['code'] != 0) {
                 $message = $query['message'] ?? 'Произошла ошибка отправки';
                 $this->telegramCommand->sendMessageToChat($this->chatId, $message, true);
             }
