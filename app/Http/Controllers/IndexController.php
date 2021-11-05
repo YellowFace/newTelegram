@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Services\Bot;
+use App\Services\Telegram\Keyboard;
 use App\Services\TelegramCommand;
 use Illuminate\Http\Request;
 use Telegram\Bot\Api;
@@ -55,20 +56,18 @@ class IndexController extends Controller
             return json_encode($response);
         }
 
-        $message = "<b>Ссылка:</b>\n" . $data['url'] . "\n\n<b>Номер:</b>\n" . $data['result'];
+        $message = "<b>Ссылка:</b>" . PHP_EOL . $data['url'];
 
         if(strlen($user['default_message']) && str_contains($data['result'], 'wa.me')) {
+            $keyboard = Keyboard::resultPhone($user, $data);
+        }
+        else {
+            $message .= "\n\n<b>Ошибка:</b>" . PHP_EOL . $data['result'];
 
-            $defaultMessage = ($user['default_message'] ?? 'Ещё актуально?') . PHP_EOL . $data['url'];
-
-            $params = http_build_query([
-                'text' => $defaultMessage
-            ]);
-
-            $message .= "?{$params}";
+            $keyboard = Keyboard::default($user);
         }
 
-        $telegramCommand->sendMessageToChat($user['chat_id'], $message, false, true, true);
+        $telegramCommand->sendMessageToChat($user['chat_id'], $message, false, true, true, $keyboard);
 
         $response['result'] = 'success';
         return json_encode($response);

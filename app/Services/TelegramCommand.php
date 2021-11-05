@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\User;
+use App\Services\Telegram\Keyboard;
 use Telegram\Bot\Api;
 
 class TelegramCommand
@@ -22,9 +23,9 @@ class TelegramCommand
         $this->user = $user;
     }
 
-    public function sendMessageToChat($chatId, $message, $die = false, $html = false, $disablePreview = false)
+    public function sendMessageToChat($chatId, $message, $die = false, $html = false, $disablePreview = false, $keyboard = 'default')
     {
-        $reply_markup = $this->getKeyboard();
+        $reply_markup = $keyboard == 'default' ? Keyboard::default($this->user) : $keyboard;
 
         $params = [
             'chat_id' => $chatId,
@@ -38,39 +39,5 @@ class TelegramCommand
         $this->telegram->sendMessage($params);
 
         if($die) die();
-    }
-
-    private function getKeyboard()
-    {
-        $keyboard = [
-            ['📘 Помощь'],
-        ];
-
-        if($this->user) {
-            if ($this->user['role'] == User::ADMIN) {
-                $adminKeyboard = [
-                    ['👤 Пользователи'],
-                    ['💻 Аккаунты'],
-                    ['⚙ Прокси'],
-                    ['Ссылок в ожидание обработки'],
-                ];
-
-                $keyboard = array_merge($keyboard, $adminKeyboard);
-            }
-
-            if($this->user['role'] == User::MODERATOR) {
-                $moderatorKeyboard = [
-                    ['💻 Аккаунты'],
-                ];
-
-                $keyboard = array_merge($keyboard, $moderatorKeyboard);
-            }
-        }
-
-        return json_encode([
-            'keyboard' => $keyboard,
-            'resize_keyboard' => true,
-            'one_time_keyboard' => false
-        ]);
     }
 }

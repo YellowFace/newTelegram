@@ -307,6 +307,7 @@ class Bot
 
         $users = collect($info['users']);
 
+        $deleted = $info['deleted'];
         $notUsed = $info['not_used'];
 
         if (!count($users)) {
@@ -324,7 +325,7 @@ class Bot
             $this->telegramCommand->sendMessageToChat($this->chatId, $message, false, true);
         }
 
-        $message = "Всего: {$count} шт, чистые: {$notUsed} шт.";
+        $message = "Всего: {$count} шт, заблокировано: {$deleted} шт, чистые: {$notUsed} шт.";
         $this->telegramCommand->sendMessageToChat($this->chatId, $message, false, true);
     }
 
