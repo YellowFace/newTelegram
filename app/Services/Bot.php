@@ -308,13 +308,12 @@ class Bot
         $users = collect($info['users']);
 
         $banned = $info['banned'];
+        $total = $info['total'];
         $notUsed = $info['not_used'];
 
         if (!count($users)) {
             $this->telegramCommand->sendMessageToChat($this->chatId, 'Нет добавленных аккаунтов', true);
         }
-
-        $count = count($users);
 
         $tableGenerator = new Asciitable();
 
@@ -325,7 +324,7 @@ class Bot
             $this->telegramCommand->sendMessageToChat($this->chatId, $message, false, true);
         }
 
-        $message = "Всего: {$count} шт, заблокировано: {$banned} шт, чистые: {$notUsed} шт.";
+        $message = "Всего: {$total} шт, заблокировано: {$banned} шт, чистые: {$notUsed} шт.";
         $this->telegramCommand->sendMessageToChat($this->chatId, $message, false, true);
     }
 
