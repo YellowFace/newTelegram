@@ -67,7 +67,8 @@ class ParserCommand
             }
         });
 
-        Log::info('test', $response);
+        Log::info('users');
+        Log::info($response);
 
         return json_decode($response, true);
     }
