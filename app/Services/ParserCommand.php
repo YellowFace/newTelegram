@@ -13,7 +13,7 @@ class ParserCommand
 {
     protected Client $client;
 
-    protected string $serverIp = 'http://45.67.230.16';
+    protected string $serverIp = 'http://100.65.2.36:90';
 
     public function __construct()
     {
