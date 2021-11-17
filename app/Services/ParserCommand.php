@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use Carbon\Carbon;
 use Carbon\CarbonInterval;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
@@ -13,7 +12,7 @@ class ParserCommand
 {
     protected Client $client;
 
-    protected string $serverIp = 'http://100.65.2.36:90';
+    protected string $serverIp = 'http://82.202.167.196:1010';
 
     public function __construct()
     {
