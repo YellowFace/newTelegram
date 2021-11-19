@@ -307,9 +307,9 @@ class Bot
 
         $users = collect($info['users'] ?? []);
 
-        $banned = $info['banned'];
-        $total = $info['total'];
-        $notUsed = $info['not_used'];
+        $banned = $info['banned'] ?? 0;
+        $total = $info['total'] ?? 0;
+        $notUsed = $info['not_used'] ?? 0;
 
         if (!count($users)) {
             $this->telegramCommand->sendMessageToChat($this->chatId, 'Нет добавленных аккаунтов', true);
