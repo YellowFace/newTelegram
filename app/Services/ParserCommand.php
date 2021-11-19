@@ -12,11 +12,12 @@ class ParserCommand
 {
     protected Client $client;
 
-    protected string $serverIp = 'http://82.202.167.196:1010';
+    protected string $serverIp;
 
     public function __construct()
     {
         $this->client = new Client();
+        $this->serverIp = getenv('API_PARSER_URL');
     }
 
     public function sendLinksForProcessing($links, $userId)
