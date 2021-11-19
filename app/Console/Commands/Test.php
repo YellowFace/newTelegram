@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\User;
 use App\Services\Asciitable;
+use App\Services\ParserCommand;
 use Illuminate\Console\Command;
 
 class Test extends Command
@@ -14,24 +15,10 @@ class Test extends Command
 
     public function handle()
     {
-        $users = User::all();
+        $parser = new ParserCommand();
 
-        foreach ($users->chunk(3) as $users) {
-            dd($users);
-        }
+        $response = $parser->getUsers();
 
-        $data = [
-            ['id' => 1, 'name' => 'Tom', 'status' => 'active'],
-            ['id' => 2, 'name' => 'Nick', 'status' => 'disabled'],
-            ['id' => 3, 'name' => 'Peter', 'status' => 'active'],
-        ];
-
-        $tableGenerator = new Asciitable();
-
-        $table = $tableGenerator->make_table($data, 'Accounts', true);
-
-        echo "<pre>$table</pre>";
-
-//        print_r(Asciitable::scrape_table($table,'name','status'));
+        dd($response);
     }
 }

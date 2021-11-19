@@ -55,19 +55,19 @@ class ParserCommand
 
     public function getUsers()
     {
-        $response = Cache::remember('get-users', CarbonInterval::minute(), function () {
+        return Cache::remember('get-users', CarbonInterval::minute(), function () {
             try {
                 $response = $this->client->get($this->serverIp . '/api/users');
-
-                return $response->getBody()->getContents();
+                $response = $response->getBody()->getContents();
+                return json_decode($response, true);
             }
             catch (\Exception $exception) {
                 Log::error($exception);
-                return [];
+                return [
+                    'users' => []
+                ];
             }
         });
-
-        return json_decode($response, true);
     }
 
     public function addProxies($proxies)
