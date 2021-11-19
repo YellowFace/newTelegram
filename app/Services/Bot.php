@@ -286,12 +286,12 @@ class Bot
                 $user['login'] = $loginPass[0];
                 $user['password'] = $loginPass[1];
                 $users[] = $user;
-
-                $this->parserCommand->addUsers($users);
             }
         }
 
-        $this->telegramCommand->sendMessageToChat($this->chatId, 'Аккаунты успешно добавлены');
+        $response = $this->parserCommand->addUsers($users);
+
+        $this->telegramCommand->sendMessageToChat($this->chatId, $response['code'] == 0 ? 'Аккаунты успешно добавлены' : 'Ошибка при попытке добавления');
     }
 
     private function addLog(string $message)
