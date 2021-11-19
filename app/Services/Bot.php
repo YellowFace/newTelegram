@@ -305,7 +305,7 @@ class Bot
 
         $info = $this->parserCommand->getUsers();
 
-        $users = collect($info['users']);
+        $users = collect($info['users'] ?? []);
 
         $banned = $info['banned'];
         $total = $info['total'];
